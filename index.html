@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>食养适配度 · 自测</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@200;300;400;500;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0b0d; --bg2:#101216;
+  --ink:#f4f6f9; --ink-soft:#9aa3b2; --ink-faint:#5d6573;
+  --blue:#8fd0ff; --blue-bright:#b6e2ff; --blue-deep:#4a8fc4;
+  --line:rgba(143,208,255,.16); --line-soft:rgba(255,255,255,.08);
+  --warn:#ff8a7a;
+  --sans:'Noto Sans SC',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.85;-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(143,208,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(143,208,255,.022) 1px,transparent 1px);
+  background-size:54px 54px;mask-image:radial-gradient(ellipse 85% 70% at 50% 0%,#000,transparent 78%);-webkit-mask-image:radial-gradient(ellipse 85% 70% at 50% 0%,#000,transparent 78%)}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 55% 42% at 78% 6%,rgba(143,208,255,.09),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:0 24px}
+.screen{display:none;min-height:100vh;flex-direction:column;justify-content:center;padding:80px 0 60px;animation:fade .6s cubic-bezier(.16,1,.3,1)}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+.kick{font-family:var(--mono);font-size:12px;letter-spacing:.26em;color:var(--blue);font-weight:400;text-transform:uppercase;display:flex;align-items:center;gap:13px;margin-bottom:30px}
+.kick::before{content:'';width:42px;height:1px;background:var(--blue)}
+
+#s-landing h1{font-weight:900;font-size:clamp(32px,6.4vw,56px);line-height:1.14;letter-spacing:-.01em;margin-bottom:22px}
+#s-landing h1 .g{color:var(--blue)}
+#s-landing .lede{font-size:clamp(16px,2.3vw,19px);color:var(--ink-soft);max-width:540px;margin-bottom:14px}
+#s-landing .lede b{color:var(--ink);font-weight:500}
+.meta{font-family:var(--mono);font-size:12px;color:var(--ink-faint);letter-spacing:.12em;margin:30px 0 38px;display:flex;gap:22px;flex-wrap:wrap}
+.meta span{display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--blue);display:inline-block;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.btn{display:inline-block;font-family:var(--mono);font-weight:500;font-size:15px;letter-spacing:.05em;color:var(--bg);background:var(--blue-bright);padding:17px 44px;border-radius:8px;border:none;cursor:pointer;transition:transform .35s,box-shadow .35s;text-align:center}
+.btn:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(143,208,255,.3)}
+.btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--line);box-shadow:none}
+.btn.ghost:hover{border-color:var(--blue);background:rgba(143,208,255,.05)}
+
+.id-grid{display:grid;gap:16px;margin-top:36px}
+.id-card{border:1px solid var(--line-soft);border-radius:16px;padding:28px 30px;background:rgba(255,255,255,.012);cursor:pointer;transition:all .4s;position:relative;overflow:hidden}
+.id-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--blue);opacity:0;transition:opacity .4s}
+.id-card:hover{border-color:var(--line);background:rgba(143,208,255,.04);transform:translateX(6px)}
+.id-card:hover::after{opacity:1}
+.id-card .no{font-family:var(--mono);font-size:13px;color:var(--blue-deep);letter-spacing:.14em;margin-bottom:10px}
+.id-card h3{font-weight:500;font-size:21px;margin-bottom:6px;color:var(--ink)}
+.id-card p{font-size:14.5px;color:var(--ink-soft);margin:0}
+.id-card .arrow{position:absolute;right:28px;top:50%;transform:translateY(-50%);color:var(--blue-deep);font-family:var(--mono);font-size:20px;transition:transform .4s}
+.id-card:hover .arrow{transform:translate(6px,-50%);color:var(--blue)}
+
+.progress{display:flex;align-items:center;gap:14px;margin-bottom:40px}
+.bar-track{flex:1;height:3px;background:var(--line-soft);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;background:var(--blue);width:0;transition:width .5s cubic-bezier(.16,1,.3,1)}
+.bar-label{font-family:var(--mono);font-size:12px;color:var(--ink-faint);letter-spacing:.1em;white-space:nowrap}
+.q-text{font-weight:500;font-size:clamp(21px,3.6vw,29px);line-height:1.4;margin-bottom:34px;letter-spacing:-.005em}
+.opts{display:grid;gap:13px}
+.opt{border:1px solid var(--line-soft);border-radius:13px;padding:18px 24px;background:rgba(255,255,255,.012);cursor:pointer;transition:all .3s;font-size:16px;color:var(--ink-soft);display:flex;align-items:center;gap:15px}
+.opt:hover{border-color:var(--line);color:var(--ink);background:rgba(143,208,255,.04)}
+.opt.sel{border-color:var(--blue);background:rgba(143,208,255,.08);color:var(--ink)}
+.opt .mk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink-faint);flex-shrink:0;transition:all .3s;position:relative}
+.opt.sel .mk{border-color:var(--blue);background:var(--blue)}
+.opt.sel .mk::after{content:'';position:absolute;inset:5px;border-radius:50%;background:var(--bg)}
+.q-nav{margin-top:36px;display:flex;justify-content:space-between;align-items:center}
+.back-link{font-family:var(--mono);font-size:13px;color:var(--ink-faint);cursor:pointer;letter-spacing:.08em;background:none;border:none}
+.back-link:hover{color:var(--blue)}
+
+#s-report{padding:70px 0 70px}
+.rpt-head{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:36px}
+.rpt-issue{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);letter-spacing:.18em;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.rpt-issue .red{color:var(--warn)}
+.score-row{display:flex;align-items:flex-end;gap:30px;flex-wrap:wrap}
+.score-block{display:flex;flex-direction:column}
+.score-cap{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.16em;margin-bottom:6px}
+.score-num{font-family:var(--mono);font-weight:500;font-size:88px;line-height:.9;color:var(--ink)}
+.score-num .max{font-size:30px;color:var(--ink-faint)}
+.score-level{font-family:var(--mono);font-size:13px;color:var(--ink-soft);letter-spacing:.14em;margin-top:8px}
+.score-diag{flex:1;min-width:240px;font-size:16px;color:var(--ink-soft);line-height:1.75;border-left:1px solid var(--line);padding-left:26px}
+.score-diag b{color:var(--ink);font-weight:500}
+.tier-tag{margin-top:22px;border-radius:12px;padding:18px 22px;border:1px solid;border-left-width:3px}
+.tier-tag .tt-name{display:block;font-weight:500;font-size:16px;margin-bottom:7px;color:var(--ink)}
+.tier-tag .tt-encourage{display:block;color:var(--ink-soft);font-weight:300;font-size:14.5px;line-height:1.7}
+.tier-1{background:rgba(143,208,255,.05);border-color:rgba(143,208,255,.2);border-left-color:var(--blue)}
+.tier-2{background:rgba(143,208,255,.07);border-color:rgba(143,208,255,.28);border-left-color:var(--blue-bright)}
+.tier-3{background:rgba(255,200,120,.06);border-color:rgba(255,200,120,.25);border-left-color:#ffc878}
+.tier-4{background:rgba(143,255,190,.06);border-color:rgba(143,255,190,.26);border-left-color:#8fffbe}
+
+.sect-tag{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--warn);margin:44px 0 22px;display:flex;align-items:center;gap:10px}
+.sect-tag::before{content:'§'}
+.steps{display:grid;gap:0}
+.step{display:grid;grid-template-columns:54px 1fr;gap:18px;padding:26px 0;border-bottom:1px dashed var(--line-soft)}
+.step:last-child{border-bottom:none}
+.step .sn{font-family:var(--mono);font-weight:400;font-size:30px;color:var(--blue-deep);line-height:1}
+.step h4{font-weight:500;font-size:19px;margin-bottom:8px;color:var(--ink)}
+.step p{font-size:15px;color:var(--ink-soft);margin:0 0 12px}
+.step .when{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:4px 12px;border-radius:4px;background:rgba(143,208,255,.1);color:var(--blue);border:1px solid var(--line)}
+
+.cta-box{margin-top:46px;border:1px solid var(--line);border-radius:18px;padding:36px 32px;text-align:center;background:rgba(143,208,255,.035)}
+.cta-box h3{font-weight:500;font-size:22px;margin-bottom:12px}
+.cta-box p{font-size:15px;color:var(--ink-soft);margin-bottom:26px}
+.cta-box .hint{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-top:18px;letter-spacing:.06em}
+.restart{text-align:center;margin-top:30px}
+
+footer{padding:40px 0 50px;text-align:center}
+footer .mark{font-family:var(--mono);font-size:12px;color:var(--blue);letter-spacing:.2em}
+footer .sub{font-size:11.5px;color:var(--ink-faint);margin-top:10px;letter-spacing:.12em}
+
+@media(max-width:560px){
+  .score-num{font-size:68px}
+  .score-diag{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:20px}
+  .step{grid-template-columns:40px 1fr;gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div class="screen active" id="s-landing">
+  <div class="wrap">
+    <div class="kick">食养适配度 · 自测</div>
+    <h1>做自己<span class="g">健康的掌舵者</span><br>用生命影响生命</h1>
+    <p class="lede">越来越多人发现，<b>懂点食养，既能照顾好自己和家人，也能变成一份收入</b>。<br>但这件事，不是每个人都适合——也不是每个人都不适合。</p>
+    <p class="lede">花 2 分钟，测出你的「食养适配度」，<br>看看你和它，到底有多合拍。</p>
+    <div class="meta">
+      <span><i class="dot"></i>免费测评</span>
+      <span>· 10 道题</span>
+      <span>· 约 2 分钟</span>
+      <span>· 生成专属报告</span>
+    </div>
+    <button class="btn" onclick="show('s-identity')">开始自测 →</button>
+  </div>
+</div>
+
+<!-- IDENTITY -->
+<div class="screen" id="s-identity">
+  <div class="wrap">
+    <div class="kick">第一步 · 你为什么来</div>
+    <h1 style="font-weight:700;font-size:clamp(26px,4.4vw,38px);line-height:1.3;margin-bottom:8px">先说说，<br>是什么让你点进来的？</h1>
+    <div class="id-grid">
+      <div class="id-card" onclick="pickId('health')">
+        <div class="no">A / 身体在喊话</div>
+        <h3>我身体有困扰，想调理</h3>
+        <p>气色差、易疲惫、睡不好、脾胃弱……想认真养一养，但不知从何下手。</p>
+        <span class="arrow">→</span>
+      </div>
+      <div class="id-card" onclick="pickId('biz')">
+        <div class="no">B / 想找件事做</div>
+        <h3>我想了解食养能不能做</h3>
+        <p>想找个低门槛、能长久的事——也许是副业，也许是一份新的可能。</p>
+        <span class="arrow">→</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="s-quiz">
+  <div class="wrap">
+    <div class="progress">
+      <span class="bar-label" id="q-count">01 / 10</span>
+      <div class="bar-track"><div class="bar-fill" id="q-bar"></div></div>
+    </div>
+    <div class="q-text" id="q-text">题目</div>
+    <div class="opts" id="q-opts"></div>
+    <div class="q-nav"><button class="back-link" onclick="prevQ()">← 上一题</button></div>
+  </div>
+</div>
+
+<!-- REPORT -->
+<div class="screen" id="s-report">
+  <div class="wrap">
+    <div class="rpt-head">
+      <div class="rpt-issue">
+        <span id="rpt-tag">食养适配度诊断</span>
+        <span class="red">● 诊断完成 · 免费版</span>
+      </div>
+      <div class="score-row">
+        <div class="score-block">
+          <div class="score-cap" id="rpt-cap">你的食养适配度</div>
+          <div class="score-num"><span id="rpt-score">0</span><span class="max">/100</span></div>
+          <div class="score-level" id="rpt-level">— LEVEL</div>
+        </div>
+        <div class="score-diag" id="rpt-diag">诊断</div>
+      </div>
+      <div id="rpt-tier" class="tier-tag" style="display:none"></div>
+    </div>
+    <div class="sect-tag" id="tag-status">现状</div>
+    <p style="font-size:16px;color:var(--ink-soft);line-height:1.8" id="rpt-status">现状</p>
+    <div class="sect-tag" id="tag-truth">真相</div>
+    <p style="font-size:16px;color:var(--ink-soft);line-height:1.8" id="rpt-truth">真相</p>
+    <div class="sect-tag" id="tag-way">出路</div>
+    <p style="font-size:16px;color:var(--ink-soft);line-height:1.8" id="rpt-way">出路</p>
+    <div class="sect-tag" id="tag-steps">行动 · 建议你这样走</div>
+    <div class="steps" id="rpt-steps"></div>
+    <div class="cta-box">
+      <h3 id="cta-title">这份报告，只是个开始。</h3>
+      <p id="cta-body">截图这份报告，私信发我，我帮你具体看看下一步怎么走。</p>
+      <button class="btn" onclick="copyTip()">截图这份报告，发给我 →</button>
+      <div class="hint" id="copy-hint">↑ 截屏保存，私信发我即可</div>
+    </div>
+    <div class="restart"><button class="btn ghost" onclick="restart()">重新测一次</button></div>
+    <footer><div class="mark">食养 · 内调 · 一份可以长久做的事</div><div class="sub">愿你把自己，也把在乎的人，照顾好</div></footer>
+  </div>
+</div>
+
+<script>
+/* ===========================================================
+   双线：health(调理为主) / biz(创业为主)
+   Q1分流后，各走一组题。两条线都埋"产品+代理"两颗种子。
+   =========================================================== */
+const QUIZ={
+  health:{
+    label:'体质自测',
+    /* 体质题：每个选项标记指向的体质 qx气虚/yang阳虚/shi湿热/yin阴虚/yu气郁/ping平和 */
+    start:{q:'先从最直接的感受说起——你平时更怕冷，还是更怕热？',
+      opts:[['特别怕冷，手脚总是凉的','yang'],['容易怕热、爱出汗、易上火','yin'],['又怕冷又容易上火，说不准','yu'],['还好，不太明显','ping']]},
+    branch:{ health:[
+      {q:'你的精力和体力，通常是什么状态？',opts:[['总是累，稍微动一下就乏','qx'],['还行，但容易没耐力','qx'],['精力旺，但情绪一上来就泄气','yu'],['挺充沛','ping']]},
+      {q:'早上起来照镜子，你的舌头通常是？',opts:[['颜色淡、胖、边上有齿痕','qx'],['舌苔厚腻、发黄、口黏','shi'],['舌头偏红、舌苔少甚至没有','yin'],['淡红、薄白苔，挺正常','ping']]},
+      {q:'你的睡眠怎么样？',opts:[['睡不够、总想睡、睡了还累','qx'],['入睡难、易醒、半夜醒了难再睡','yin'],['睡前胡思乱想、多梦','yu'],['睡得挺香','ping']]},
+      {q:'你的肠胃和大便情况，更接近？',opts:[['容易腹胀、吃一点就饱、大便偏软','qx'],['大便黏马桶、冲不干净、口苦','shi'],['容易便秘、干结、口干','yin'],['基本正常','ping']]},
+      {q:'你的皮肤和面部，平时更像？',opts:[['偏黄、没光泽、显疲态','qx'],['油、爱长痘、毛孔大','shi'],['偏干、易起皮、爱长斑','yin'],['手脚凉、脸色偏白','yang'],['挺稳定','ping']]},
+      {q:'情绪上，你更常出现哪种？',opts:[['没什么劲、提不起兴趣','qx'],['容易烦躁、爱叹气、压抑','yu'],['心烦、坐不住、易急','yin'],['比较平稳','ping']]},
+      {q:'女性看月经/男性看整体状态，更接近？',opts:[['量少色淡、易疲乏（男：易累怕冷）','yang'],['经前胀痛、情绪波动大（男：压力大爱叹气）','yu'],['量少、易上火口干（男：燥热失眠）','yin'],['基本规律','ping']]},
+      {q:'综合感受，你身体最大的困扰其实是？',opts:[['总是没力气、容易累','qx'],['手脚冰凉、怕冷','yang'],['湿气重、黏腻、长痘','shi'],['干燥、上火、睡不好','yin'],['情绪堵、爱生闷气','yu']]},
+    ]},
+    end:{q:'最后——你最想通过调理改善什么？',opts:[['让自己有精神、不那么累','qx'],['暖起来、气色好起来','yang'],['把湿气和痘痘调没','shi'],['不再上火、睡个好觉','yin'],['心情舒展、不再憋闷','yu']]}
+  },
+  biz:{
+    label:'食养创业',
+    start:{q:'先说说，是什么让你想了解食养这件事？',opts:[['想找个副业、多份收入',1,'biz'],['不想打一辈子工，想自己做点事',1,'biz'],['自己在用，觉得不错想分享',2,'biz'],['身边有人做成了，被吸引',1,'biz']]},
+    branch:{ biz:[
+      {q:'你自己，平时有养生/食养的习惯吗？',opts:[['没有，纯好奇',0],['偶尔，谈不上习惯',1],['有一些，挺注重',2],['很注重，自己就是受益者',3]]},
+      {q:'你每天能挤出多少时间，做一件想做的事？',opts:[['几乎没有，很忙',0],['挤一挤有一点',1],['每天能稳定留一点',2],['时间比较自由',3]]},
+      {q:'要你把一个好东西"分享/介绍"给别人，你的状态是？',opts:[['很怕，张不开嘴',0],['有点别扭，但能试',1],['还行，能自然聊',2],['没问题，我爱分享',3]]},
+      {q:'你身边的人脉/社交圈，大概是？',opts:[['很窄，没什么人',0],['普通，几个朋友',1],['还不错，认识些人',2],['挺广，爱交朋友',3]]},
+      {q:'对"靠食养赚钱"，你现在最大的顾虑是？',opts:[['怕做不来、不专业',0],['怕拉不下脸、像微商',0],['怕没人带、瞎摸索',1],['没太多顾虑，想试',2]]},
+      {q:'有人手把手带你，对你重要吗？',opts:[['特别重要，没人带不敢动',1],['挺重要，少走弯路',2],['有更好，没有也行',2],['我更想自己研究',1]]},
+      {q:'如果做这件事，你更看重？',opts:[['先把身体养好，赚钱其次',1],['能有稳定的额外收入',2],['能成长、能学东西',2],['能做大、能带团队',3]]},
+      {q:'如果有一条"低门槛、有人带、能长久"的路，你会？',opts:[['想先了解',1],['愿意试试',2],['想认真做',3],['马上想开始',3]]},
+    ]},
+    end:{q:'最后一题——你最希望从这件事里得到什么？',opts:[['先搞清楚能不能做',0],['一份能上手的副业',1],['一件能长久做的事',2],['一个能做大的事业',3]]}
+  }
+};
+
+const REPORT={
+  health:{
+    /* 按主体质取内容。tagStatus/Truth/Way/Steps 各体质通用，放在 common 里 */
+    common:{
+      cap:'你的体质倾向',
+      tagStatus:'你的身体，正在说什么',
+      tagTruth:'为什么会这样 · 说人话',
+      tagWay:'好消息 · 它是可以调回来的',
+      tagSteps:'调理方向 · 建议你这样养',
+    },
+    types:{
+      qx:{name:'气虚 · 偏倾向', label:'气虚体质',
+        diag:'你的身体，<b>更像一台电量总在告急的手机</b>——不是坏了，是"气"不足，带不动一天的运转。',
+        status:'你大概常年被这些缠着：怎么睡都累、一动就乏、吃点就饱胀、气色发黄没光泽、说话都懒得大声。<b>这在中医里叫"气虚"</b>——通俗说，就是身体的"动力"不够用了。很多人把它当成"我就是懒、我就是体质差"，其实它是可以补回来的。',
+        truth:'打个比方：气，就像身体里推动一切运转的那股劲儿。气足，吃进去的东西能化成能量、血能送到该去的地方；气虚，就像发动机马力不足，吃得再多也使不上劲，反而堆成湿、堆成胖。<b>所以气虚的人，越累越不想动，越不动越虚，容易陷进死循环。</b>盲目进补还容易"虚不受补"，越补越上火。',
+        way:'气虚是最"听话"的一类——只要养对了，恢复往往最快。关键不在猛补，在于"健脾益气"，把身体的动力工厂先修好，让它自己能造能量。配合对的食材慢慢养，一两个月你就能感觉到：没那么累了、人有劲了、气色也亮了。',
+        steps:[
+          {n:'01',t:'先健脾，养住根本',d:'气虚多半根在脾胃弱。先把脾胃养起来——少生冷、少思虑，吃些山药、小米、红枣、黄芪这类温和健脾益气的食材。',when:'本周起'},
+          {n:'02',t:'用对的食养方，温和补气',d:'气虚最忌乱补、猛补。一套配比对的食养方（比如对症的膏方、茶饮），比你乱买保健品有用得多——这一步建议让懂的人帮你配。',when:'1-3 月'},
+          {n:'03',t:'养成节律，让气长起来',d:'早睡、别久坐、适度走动。气是养出来的，不是熬出来的。坚持下来，你会找回久违的精力。',when:'长期'}
+        ]},
+      yang:{name:'阳虚 · 偏倾向', label:'阳虚体质',
+        diag:'你的身体，<b>像一间常年没开够暖气的房子</b>——不是哪坏了，是"火力"不足，整个人都偏寒。',
+        status:'你最典型的信号是怕冷：手脚常年冰凉、比别人多穿一件、吃点凉的就不舒服、容易疲惫、脸色偏白。<b>这在中医里叫"阳虚"</b>——说白了，身体的"小太阳"不够旺，暖不热自己。很多女性的宫寒、痛经、易胖，根子都在这儿。',
+        truth:'阳气，就是身体里的那团火，负责供暖、负责把水湿蒸腾掉。火力旺，全身暖、代谢快；阳虚火弱，寒和湿就在身体里积着排不出去——<b>所以阳虚的人往往又冷又容易肿、容易胖</b>，喝凉水都长肉的那种委屈，多半就是它。一味吃寒凉的"清火""降火"，反而是火上浇雪、越调越糟。',
+        way:'阳虚最需要的是"温补"——慢慢把身体的火重新点起来。这不是一天的事，但方向特别明确：避开生冷、用温热的食材和方子持续养。养对了，手脚会先暖起来，然后是气色、精神、整个人的状态都跟着回来。',
+        steps:[
+          {n:'01',t:'戒掉生冷，先别灭火',d:'冰饮、生冷、寒凉水果先停一停。阳虚的人，护住阳气比补更重要——别再一边补一边漏。',when:'本周起'},
+          {n:'02',t:'温补，把火慢慢点起来',d:'用温性的食材和食养方（如姜枣、当归、对症的温补膏方）持续养。温补讲究循序，建议让懂的人帮你看准再下手。',when:'1-3 月'},
+          {n:'03',t:'养出阳气，暖由内生',d:'适度晒太阳、动起来生阳、规律作息。坚持下来，那种从骨子里发冷的感觉会慢慢消失。',when:'长期'}
+        ]},
+      shi:{name:'湿热 · 偏倾向', label:'湿热体质',
+        diag:'你的身体，<b>像一间又闷又潮、还有点发烧的房间</b>——湿和热搅在一起，黏腻又烦躁。',
+        status:'你的典型特征：脸油爱长痘、大便黏马桶冲不净、口苦口黏、舌苔厚黄、人容易困重烦躁。<b>这在中医里叫"湿热"</b>——通俗说，身体里又潮又上火，像梅雨天的房间，黏糊糊还闷得慌。这类体质，越是熬夜、重油重辣，越严重。',
+        truth:'湿，是身体里排不出去的"废水"；热，是郁在里面的"火"。两个凑一起最难缠——<b>单清热，湿更重；单祛湿，又上火。</b>所以湿热的人，常常这也试那也试，痘照长、人照困。问题不在你不努力，在于湿热得"一边清一边利"，方向和配比都有讲究，乱调容易反复。',
+        way:'湿热调理的关键是"清热利湿"两手抓，同时管住嘴。把湿热慢慢化掉，你会发现：脸不那么油了、痘消了、人也清爽不困了。这类体质调对了，变化是肉眼可见的——这也是为什么很多人调完特别愿意分享。',
+        steps:[
+          {n:'01',t:'先管嘴，别再喂湿热',d:'重油、重辣、甜腻、酒、熬夜先减下来——这些都是湿热的"燃料"。先断了源头，调理才有效。',when:'本周起'},
+          {n:'02',t:'清热又利湿，双管齐下',d:'用能清热祛湿的食材和茶饮（如薏米、赤小豆、对症的祛湿茶方）。湿热配比讲究，建议让懂的人帮你调，避免越清越虚。',when:'1-3 月'},
+          {n:'03',t:'养出清爽，稳住不反复',d:'规律作息、适度运动出汗排湿。湿热怕的是反复，养成习惯才能真正清爽下来。',when:'长期'}
+        ]},
+      yin:{name:'阴虚 · 偏倾向', label:'阴虚体质',
+        diag:'你的身体，<b>像一壶水快烧干了的锅</b>——不是火太旺，是"水"不够，干烧着，到处冒虚火。',
+        status:'你常被这些困扰：手心脚心热、容易上火口干、皮肤偏干、睡眠浅易醒、心烦坐不住、爱长斑。<b>这在中医里叫"阴虚"</b>——说人话，身体里的"津液（水分）"不足了，少了水的滋润，就到处发干、发热。很多人误以为自己火大，拼命喝凉茶降火，结果越降越虚。',
+        truth:'身体需要"水"和"火"平衡。阴虚的人不是火太多，是水太少——<b>就像锅里水少了，看着冒烟像着火，其实加水才对，浇水（清火）只会更糟。</b>这就是为什么阴虚的人一味降火没用，反而越喝凉的越没精神。真正该做的是"滋阴"，把水补回来，虚火自然就降了。',
+        way:'阴虚调理的方向是"滋阴润燥"——温和地把身体的津液补回来。养对了，你会睡得安稳了、不那么干和燥了、心也静下来了。这是个需要耐心的过程，但方向对了，身体的回馈很实在。',
+        steps:[
+          {n:'01',t:'别再猛降火，先补水',d:'少熬夜（熬夜最伤阴）、少辛辣燥热。阴虚的人，滋润比清火重要得多。',when:'本周起'},
+          {n:'02',t:'滋阴润燥，温和地补',d:'用滋阴的食材和方子（如银耳、百合、麦冬、对症的滋阴膏方）。滋阴讲究不腻不燥，建议让懂的人帮你配准。',when:'1-3 月'},
+          {n:'03',t:'养出安宁，由内润起来',d:'规律早睡、静心少耗。阴是静中养出来的，养够了，干、热、烦都会慢慢退去。',when:'长期'}
+        ]},
+      yu:{name:'气郁 · 偏倾向', label:'气郁体质',
+        diag:'你的身体，<b>更像一条堵住的水管</b>——东西不少，但流不动，憋着、堵着、不痛快。',
+        status:'你的典型状态：爱叹气、情绪容易低落或烦躁、胸口或两胁发胀、睡前胡思乱想、女性常经前胀痛情绪大。<b>这在中医里叫"气郁"</b>——通俗说，身体里那股"气"堵住了、流不顺，情绪和身体都跟着憋得慌。它和压力、情绪关系最大。',
+        truth:'气，本该在身体里顺畅地流动。一旦长期压力大、情绪憋着，气就堵住了——<b>气一堵，连带着吃不香、睡不好、这疼那胀，时间久了还容易牵连别的问题。</b>所以气郁的人，光休息没用，光忍着更糟，关键是得让气"疏通"起来、流动起来。很多人的"亚健康"，根子其实在这股堵着的气。',
+        way:'气郁调理的方向是"疏肝理气"——把堵住的气一点点疏开。养对了，你会觉得胸口松了、情绪稳了、睡得也踏实了。这类调理特别讲究"身心一起调"，配合对的食养和情绪疏导，变化会很明显。',
+        steps:[
+          {n:'01',t:'先让情绪有出口',d:'气郁最忌憋着。先给自己留点疏解的出口——运动、倾诉、晒太阳，让堵住的气先松动起来。',when:'本周起'},
+          {n:'02',t:'疏肝理气，把气理顺',d:'用能疏肝理气的食材和茶饮（如玫瑰、陈皮、对症的理气方）。疏肝讲究柔和不耗，建议让懂的人帮你搭配。',when:'1-3 月'},
+          {n:'03',t:'养出舒展，身心都松开',d:'规律作息、适度运动、学着不把事都憋心里。气顺了，人整个都会轻盈起来。',when:'长期'}
+        ]},
+      ping:{name:'平和 · 偏倾向', label:'平和体质',
+        diag:'恭喜你，<b>你的身体底子相当不错</b>——各方面都比较均衡，是中医里最理想的"平和体质"。',
+        status:'你大体上吃得香、睡得好、精力也够，没有特别突出的偏颇。<b>这在中医里叫"平和体质"</b>，是大家都羡慕的状态。但要提醒你：平和不是"一劳永逸"，现代人的熬夜、压力、饮食，很容易把好底子悄悄耗偏——尤其你可能在某一两个维度已经有了苗头。',
+        truth:'平和体质就像一座维护得不错的房子，但再好的房子也需要保养。<b>很多人就是仗着"我身体一直挺好"，疏于养护，等到明显不舒服时，往往已经偏了一段时间。</b>真正聪明的做法，是趁底子还好的时候，把养生变成习惯——守住，比调回来容易得多。',
+        way:'对你来说，食养的意义是"防患于未然"——用温和的食养把这份好状态稳稳守住，让你比同龄人更耐造、更年轻。这件事现在做最划算，因为你是从高位维护，而不是从低谷往回爬。',
+        steps:[
+          {n:'01',t:'守住好状态',d:'保持规律作息和均衡饮食，别让熬夜和压力悄悄掏空你的好底子。',when:'日常'},
+          {n:'02',t:'顺时而养、适度进补',d:'根据季节用温和的食养方调养（如应季茶饮、温和膏方），让好状态更稳。具体怎么搭，可以让懂的人帮你看。',when:'长期'},
+          {n:'03',t:'把养生变成习惯',d:'平和体质的优势，靠的是长期维护。养成习惯，你会一直走在同龄人前面。',when:'长期'}
+        ]}
+    }
+  },
+  biz:{
+    cap:'你的食养适配度',
+    tagStatus:'现状 · 你和食养这件事，有多合拍',
+    tagTruth:'真相 · 决定能不能做成的，是什么',
+    tagWay:'出路 · 这条路本可以这样走',
+    tagSteps:'行动 · 建议你这样开始',
+    /* 四个意向层 t1观望 t2心动 t3行动 t4高意向 */
+    tiers:{
+      t1:{ tierClass:'tier-1', tierName:'观望中', encourage:'你愿意花时间了解自己的身体和生活方式，这份用心本身就很难得——很多改变，正是从"先认真看看"开始的。',
+        level:'了解 LEVEL',
+        diag:'你对食养有点好奇，<b>但目前更多是观望</b>。这很正常，每个开始认真做的人，都是从这一步过来的。',
+        status:'说实话，你现在还处在"看看再说"的阶段——也许时间不太够，也许心里还有不少顾虑，也许只是单纯被勾起了一点兴趣。<b>这个阶段最不该做的，就是被人催着做决定。</b>',
+        truth:'食养这件事，急不来。它考验的不是一时冲动，而是你愿不愿意先从"了解它、相信它"开始。<b>真正适合你现在的，不是马上投入，而是先多看看别人是怎么做的、效果怎么样，让自己心里有个底。</b>',
+        way:'你可以先不做任何决定，只是观察：看看真正在做的人，他们的状态、他们的收获。等哪天你心里那个"我好像也可以试试"的念头自己冒出来，再迈步也不迟。<b>好的开始，从来不是被推着走的。</b>',
+        steps:[
+          {n:'01',t:'先了解，不着急',d:'多看看食养是怎么回事、别人是怎么做的，让自己从好奇变成了解。',when:'慢慢来'},
+          {n:'02',t:'先把自己照顾好',d:'就算暂时不做这件事，先用食养把自己和家人的身体养好，本身就值得。',when:'日常'},
+          {n:'03',t:'等时机自然成熟',d:'当你真心觉得"我也想试试"，那才是属于你的起点。',when:'不急'}
+        ]},
+      t2:{ tierClass:'tier-2', tierName:'心动中', encourage:'你不只是随便看看——你心里已经动了念头。会有顾虑，恰恰说明你在认真对待它。这份慎重，是能把一件事做好的人才有的特质。',
+        level:'心动 LEVEL',
+        diag:'你对食养<b>动过心，但还有些没底</b>。怕做不来、怕不专业、怕拉不下脸——这些顾虑，几乎每个新手都有过。',
+        status:'你已经不只是好奇了，你在认真想"我能不能做"。<b>但那些"我不会、我不专业、我开不了口"的担心，让你一直没敢迈出那一步。</b>这不是你的问题——是你还没看到，这件事其实没那么难。',
+        truth:'你以为做食养要很懂、很会说、脸皮很厚——其实都不是。<b>真正需要的，是你先成为受益者，再把真实的感受分享出去。</b>你不会写，有 Ai 帮你；你不会说，有现成的话术；你怕没人带，那正是可以解决的。挡住你的从来不是能力，是没人告诉你"原来可以这样"。',
+        way:'换个角度想：你不需要一开始就很厉害。你只要先把自己的身体调好，把真实的变化讲出来——这就是最有说服力的分享。在有人带、有工具、有方法的情况下，你的那些顾虑会一个个被解掉。<b>很多和你一样曾经没底的人，现在都做起来了。</b>',
+        steps:[
+          {n:'01',t:'先消除顾虑、建立信心',d:'看看那些和你一样起步、现在做起来的人——你会发现门槛没你想的高。',when:'本周'},
+          {n:'02',t:'先自己用、亲身体验',d:'先把自己的身体养好，有了真实体感，分享就变成了自然的事。',when:'1-2 月'},
+          {n:'03',t:'在有人带的情况下迈第一步',d:'用现成的方法和工具，做出你的第一次分享，跨过最难的"开口"那关。',when:'1-3 月'}
+        ]},
+      t3:{ tierClass:'tier-3', tierName:'想行动', encourage:'你身上有一份难得的行动力和分享欲，也有健康意识打底——这正是做成这件事最好的基础。你比自己以为的，更适合。',
+        level:'适合 LEVEL',
+        diag:'你和食养这件事<b>挺合拍</b>。你有意愿、也有一定基础，缺的只是一条清晰的、有人带的路。',
+        status:'你不只是想想——你有时间、有意愿、也愿意分享，甚至自己可能就在用食养。<b>你已经具备了开始的所有条件，唯一缺的，是一套能让你少走弯路的方法和路径。</b>',
+        truth:'决定能不能做成的，从来不是"懂多少养生知识"，而是三样东西：信不信、愿不愿分享、有没有可复制的方法。<b>前两样你都有了，最后一样恰恰是可以被教、可以被带的。</b>你现在最划算的事，就是找对方法、有人带着开始，把你的意愿变成结果。',
+        way:'你这样的状态，最适合"边做边学"。先把自己用成样板，然后跟着现成的方法把第一次分享、第一笔收入跑出来。<b>你已经站在起跑线上了，差的只是发令枪。</b>一旦开始，你大概率比大多数人走得快。',
+        steps:[
+          {n:'01',t:'先自己用、成为样板',d:'把自己的身体调好，亲身体验效果——这是你最有说服力的底气。',when:'本周起'},
+          {n:'02',t:'跟着方法跑通第一次',d:'用现成的模板和工具，做出你的第一次分享、第一笔收入。',when:'1-2 月'},
+          {n:'03',t:'把它做成长久的事',d:'从分享走到带人，用可复制的方法把它变成一份能持续的收入。',when:'3 月+'}
+        ]},
+      t4:{ tierClass:'tier-4', tierName:'想赚钱', encourage:'你身上有一种很难得的东西——清晰的方向感、说做就做的行动力，加上对健康的真心认同。这三样凑在一起，正是能把一件事做成的人才有的底色。请相信自己，你已经准备得比想象中更好了。',
+        level:'契合 LEVEL',
+        diag:'你和食养这件事<b>高度契合</b>。你有体感、有意愿、愿意分享，而且已经准备好行动了——这种状态，太难得了。',
+        status:'你不是在"考虑"，你是在"找入口"。<b>你已经想清楚要做，甚至迫不及待想开始</b>——你需要的不再是被说服，而是一条马上能走的路、一个能带你的人。',
+        truth:'对你来说，所有该具备的底色都齐了：你信它、愿意分享、也有行动力。<b>现在唯一会拖慢你的，是没找对方法、没找对人——自己瞎摸索，会白白浪费你这股难得的劲儿。</b>真正能让你快速起步的，是直接对接一套已经跑通的方法，少走所有弯路。',
+        way:'你这样的人，最不该把时间浪费在试错上。直接找对方法、有人手把手带你，把你的行动力用在对的地方——你完全可能比别人快几倍跑出结果。<b>你已经准备好了，现在就差把这股劲儿，用对地方。</b>',
+        steps:[
+          {n:'01',t:'尽快对接方法和人',d:'别再自己摸索——直接找一套跑通的方法、一个能带你的人，省下所有试错时间。',when:'就现在'},
+          {n:'02',t:'快速跑通第一笔',d:'用现成的工具和路径，第一时间做出你的第一次分享和收入。',when:'1 月内'},
+          {n:'03',t:'放大，做成事业',d:'凭你的行动力，从分享到带人，把它做成一份能放大的事业。',when:'持续'}
+        ]}
+    }
+  }
+};
+
+/* ===== 运行逻辑 ===== */
+let curId=null, stage=null, flow=[], curIdx=0, answers=[];
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function pickId(id){curId=id;stage=null;answers=[];curIdx=0;flow=[{type:'start',data:QUIZ[id].start}];renderQ();show('s-quiz')}
+function buildFlow(){const set=QUIZ[curId];const branch=set.branch[stage];flow=[{type:'start',data:set.start}];branch.forEach(q=>flow.push({type:'q',data:q}));flow.push({type:'end',data:set.end})}
+function renderQ(){
+  const total=10;const item=flow[curIdx];
+  document.getElementById('q-count').textContent=String(curIdx+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');
+  document.getElementById('q-bar').style.width=(curIdx/total*100)+'%';
+  document.getElementById('q-text').textContent=item.data.q;
+  const wrap=document.getElementById('q-opts');wrap.innerHTML='';
+  item.data.opts.forEach((o,i)=>{
+    const sel=answers[curIdx]&&answers[curIdx].i===i?' sel':'';
+    const el=document.createElement('div');el.className='opt'+sel;
+    el.innerHTML='<span class="mk"></span><span>'+o[0]+'</span>';
+    el.onclick=()=>{
+      const v=o[1];
+      answers[curIdx]={i:i, score:(typeof v==='number'?v:0), type:(typeof v==='string'?v:null)};
+      if(item.type==='start'){stage=(curId==='health'?'health':o[2]); if(curId==='health'){answers[curIdx].type=o[1]} buildFlow()}
+      document.getElementById('q-bar').style.width=((curIdx+1)/total*100)+'%';setTimeout(nextQ,250)};
+    wrap.appendChild(el);
+  });
+  document.querySelector('.back-link').style.visibility=curIdx===0?'hidden':'visible';
+}
+function nextQ(){if(curIdx<flow.length-1){curIdx++;renderQ()}else{buildReport()}}
+function prevQ(){if(curIdx>0){curIdx--;renderQ()}}
+function buildReport(){
+  if(curId==='health'){ buildHealthReport(); return; }
+  let raw=answers.reduce((a,b)=>a+(b?b.score:0),0);
+  const maxRaw=10*3;
+  let score=Math.round(raw/maxRaw*72)+18;
+  const B=REPORT.biz;
+  let tier;
+  if(raw<=6) tier=B.tiers.t1;
+  else if(raw<=13) tier=B.tiers.t2;
+  else if(raw<=20) tier=B.tiers.t3;
+  else tier=B.tiers.t4;
+  document.getElementById('rpt-tag').textContent='食养适配度诊断';
+  document.getElementById('rpt-cap').textContent=B.cap;
+  document.getElementById('rpt-level').textContent=tier.level;
+  document.getElementById('rpt-diag').innerHTML=tier.diag;
+  document.getElementById('tag-status').textContent=B.tagStatus;
+  document.getElementById('tag-truth').textContent=B.tagTruth;
+  document.getElementById('tag-way').textContent=B.tagWay;
+  document.getElementById('tag-steps').textContent=B.tagSteps;
+  document.getElementById('rpt-status').innerHTML=tier.status;
+  document.getElementById('rpt-truth').innerHTML=tier.truth;
+  document.getElementById('rpt-way').innerHTML=tier.way;
+  renderSteps(tier.steps);
+  const tt=document.getElementById('rpt-tier');
+  tt.className='tier-tag '+tier.tierClass;tt.style.display='block';
+  tt.innerHTML='<span class="tt-name">你现阶段 · '+tier.tierName+'</span><span class="tt-encourage">'+tier.encourage+'</span>';
+  if(tier===B.tiers.t1){
+    document.getElementById('cta-title').textContent='先泡在群里，慢慢了解就好。';
+    document.getElementById('cta-body').innerHTML='不用急着做任何决定。<br><b>截图这份报告私信发我，我先邀请你进我的养生社群——群里每天会分享中医养生、食养和创业相关的内容，你可以泡在群里了解一下，慢慢感受，挺好。</b>';
+  }else if(tier===B.tiers.t2){
+    document.getElementById('cta-title').textContent='心里的那些顾虑，我陪你理一理。';
+    document.getElementById('cta-body').innerHTML='你已经动心了，只是还没底，这很正常。<br><b>截图这份报告私信发我，把你最担心的那几点告诉我，我以过来人的经验帮你一个个捋清楚——想明白了，你再决定也不迟。</b>';
+  }else if(tier===B.tiers.t3){
+    document.getElementById('cta-title').textContent='你已经有了很好的基础。';
+    document.getElementById('cta-body').innerHTML='你有意愿、也有底子，其实最适合开始了。<br><b>截图这份报告私信发我，我帮你看看，以你现在的情况，第一步具体可以怎么走、怎么少走弯路。</b>';
+  }else{
+    document.getElementById('cta-title').textContent='你的状态，真的很难得。';
+    document.getElementById('cta-body').innerHTML='清晰的方向、说做就做的劲头，还有对健康的认同——你已经准备得很好了。<br><b>截图这份报告私信发我，我们找个时间好好聊聊，我把这套方法完整带给你，让你这股劲儿真正用在刀刃上。</b>';
+  }
+  show('s-report');animateScore(score);
+}
+
+function buildHealthReport(){
+  document.getElementById('rpt-tier').style.display='none';
+  // 统计各体质票数
+  const tally={qx:0,yang:0,shi:0,yin:0,yu:0,ping:0};
+  answers.forEach(a=>{if(a&&a.type&&tally[a.type]!==undefined)tally[a.type]++});
+  // 排序取主次
+  const sorted=Object.keys(tally).sort((x,y)=>tally[y]-tally[x]);
+  let main=sorted[0];
+  // 若平和票数最高但偏颇体质也有不少，优先报偏颇（更有调理钩子）
+  if(main==='ping'){
+    const second=sorted[1];
+    if(tally[second]>=3) main=second; // 有明显偏颇就报偏颇
+  }
+  const second=sorted.find(k=>k!==main&&tally[k]>0);
+  const T=REPORT.health.types[main];const C=REPORT.health.common;
+  // 体质"指数"= 偏颇程度，主体质票数越多指数越高（越需要调理）
+  let idx;
+  if(main==='ping'){ idx=24+ (tally.ping*4); } // 平和给低偏颇分
+  else { idx=40 + tally[main]*7; }
+  idx=Math.min(idx,92);
+  document.getElementById('rpt-tag').textContent='中医体质 · 食养自测';
+  document.getElementById('rpt-cap').textContent=(main==='ping'?'你的体质均衡度':'你的体质偏颇指数');
+  document.getElementById('rpt-level').textContent=T.name;
+  document.getElementById('rpt-diag').innerHTML=T.diag;
+  document.getElementById('tag-status').textContent=C.tagStatus;
+  document.getElementById('tag-truth').textContent=C.tagTruth;
+  document.getElementById('tag-way').textContent=C.tagWay;
+  document.getElementById('tag-steps').textContent=C.tagSteps;
+  // 主体质 status，若有兼夹倾向追加一句
+  let statusHTML=T.status;
+  if(second && main!=='ping'){
+    const S=REPORT.health.types[second];
+    statusHTML+='<br><br>另外，你还带着一点 <b>'+S.label+'</b> 的兼夹倾向——身体往往不是单一类型，这也是为什么"千人一方"的调理常常没用，<b>对症、对人才有效。</b>';
+  }
+  document.getElementById('rpt-status').innerHTML=statusHTML;
+  document.getElementById('rpt-truth').innerHTML=T.truth;
+  document.getElementById('rpt-way').innerHTML=T.way;
+  renderSteps(T.steps);
+  document.getElementById('cta-title').textContent='想更懂自己的身体，就别将就。';
+  document.getElementById('cta-body').innerHTML='这份测试给你的是大方向，真正对症还得看你本人。<br><b>截图这份报告，再拍一张你的舌头照片私信发我，我帮你具体看看怎么调、怎么吃。</b><br>要是你想先慢慢了解，也可以让我先邀请你进我的养生社群——群里每天会分享中医养生、食养相关的内容，你可以泡在群里了解一下。';
+  show('s-report');animateScore(idx);
+}
+
+function renderSteps(steps){
+  const box=document.getElementById('rpt-steps');box.innerHTML='';
+  steps.forEach(s=>{const el=document.createElement('div');el.className='step';el.innerHTML='<div class="sn">'+s.n+'</div><div><h4>'+s.t+'</h4><p>'+s.d+'</p><span class="when">'+s.when+'</span></div>';box.appendChild(el)});
+}
+function animateScore(target){const el=document.getElementById('rpt-score');let n=0;const step=Math.max(1,Math.round(target/45));const t=setInterval(()=>{n+=step;if(n>=target){n=target;clearInterval(t)}el.textContent=n},22)}
+function copyTip(){const h=document.getElementById('copy-hint');h.textContent='↑ 长按截屏 / 截图保存这一整页，私信发我即可';h.style.color='var(--blue)'}
+function restart(){curId=null;stage=null;answers=[];curIdx=0;show('s-landing')}
+</script>
+</body>
+</html>
